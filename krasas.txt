@@ -1,0 +1,13 @@
+#3A98B9
+
+#FFF1DC
+
+#E8D5C4
+
+#EEEEEE
+
+https://codeshack.io/login-system-python-flask-mysql/
+
+https://realpython.com/flask-project/
+
+https://fonts.google.com/specimen/Ponomar

@@ -1,0 +1,31 @@
+{% extends 'izkartojums.html' %}
+{% block title %}Login{% endblock title %}
+{% block content %}
+<h1 style="text-align: center;">Reģistrācija</h1>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for category, message in messages %}
+      <li style="font-style:italic;" class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+<form method="post">
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Lietotājvārds</label>
+    <input type="text" name="regvards" class="form-control" id="exampleInputEmail1" required>
+    <div id="emailHelp" class="form-text"></div>
+  </div>
+  <div class="mb-3">
+    <label for="emailinput" class="form-label">E-pasts</label>
+    <input type="email" name="regepasts" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+    <div id="emailHelp" class="form-text"></div>
+  </div>
+  <div class="mb-3">
+    <label for="passwordinput" class="form-label">Parole</label>
+    <input type="password" name="regparole" class="form-control" id="exampleInputPassword1" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Reģistrēties</button>
+</form>
+{% endblock content %}

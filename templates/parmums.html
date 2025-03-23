@@ -1,0 +1,44 @@
+{% extends 'izkartojums.html' %}
+
+{% block title %}Par Mums{% endblock title %}
+
+{% block style %}
+<style>
+    #imgparmums{
+      max-width: 100%;
+      max-height: 400px;
+      aspect-ratio: 3/2;
+      object-fit: fill;
+      height: 50vw;
+      margin:auto;
+    }
+    
+</style>
+{% endblock style %}
+
+
+{% block content %}
+<h1 id="galvaparmums">Mūsu izcila programmētāju komanda</h1>
+<div class="container text-center">
+    <div class="row">
+      <div class="col">
+        <h2>Nauris Bogomazovs</h2>
+        <img  id="imgparmums" src="{{ url_for('static', filename='profile1.jpg') }}" class="img-fluid" alt="Martins Vagins">
+
+      </div>
+      <div class="col">
+        <h2>Martins Vagins</h2>
+        <img  id="imgparmums" src="{{ url_for('static', filename='profile2.jpg') }}" class="img-fluid">
+      </div>
+      <div class="col">
+        <h2>Roberts Preimanis</h2>
+        <img  id="imgparmums" src="{{ url_for('static', filename='profile3.jpg') }}" class="img-fluid">
+      </div>
+    </div>
+  </div>
+<h3 style="word-wrap: break-word; background-color: #dfe1e6; color: #212529; line-height: 1.8; font-style: italic; margin-top: 2vw;">    Mūsu stāsts sākās ar aizrautību un inovācijām. Roberts Preimanis, izcils programmētājs un radošs prāts, atgriezās Latvijā pēc ilgstošām studijām Indijā, nesot līdzi jaunas idejas un pieredzi. Latvijā viņš sastapa līdzīgi domājošus entuziastus – Martinu Vaginu un Nauri Bogomazovu, divus talantīgus programmētājus, kuri dalījās viņa aizrautībā par tehnoloģijām un izglītības iespējām.
+
+  Apvienojot spēkus, viņi radīja "Visvaris – Ceļš uz stipendiju", vizuālo noveli, kas ne tikai izklaidē, bet arī iedvesmo jauniešus sasniegt vairāk. Šis projekts ir mūsu vīzija par to, kā Piņķi var palīdzēt attīstīt radošumu, stratēģisko domāšanu un mērķtiecību.
+  
+  Mēs ticam, ka videospēles un neatlaidība padara cilvēku visvarenu. Tāpēc mēs turpinām attīstīt visvaris.lv, jo tu VisuVari!</h3>
+{% endblock content %}

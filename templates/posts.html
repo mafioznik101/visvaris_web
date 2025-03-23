@@ -1,0 +1,18 @@
+{% extends 'izkartojums.html' %}
+{% block title %}Visvaris.lv{% endblock title %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+      Autors
+    </div>
+    <div class="card-body">
+      <blockquote class="blockquote mb-0">
+        <img id="postabilde" src="{{ url_for('static', filename='kakis3.jpg') }}" class="rounded float-start" alt="postimage">
+        <p>Posta Teksts.</p>
+        <footer class="blockquote-footer">Datums</footer>
+      </blockquote>
+    </div>
+  </div>
+{{ some }}
+{{toPass}}
+{% endblock content %}
