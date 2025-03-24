@@ -35,7 +35,7 @@ class Lietotajaizveide:
     
     def saglabat_db(self):
         try:
-            con = sqlite3.connect("file:lietotaji.sqlite?mode=rw&cache=shared", "uri=True")
+            con = sqlite3.connect("file:lietotaji.sqlite?mode=rw&cache=shared", uri=True)
             cur = con.cursor()
             cur.execute("INSERT INTO lietotaju_info (vards, parole, email, uuid) VALUES (?, ?, ?, ?)",(self.vards, self.parole, self.email, self.uuid),)
             con.commit()
@@ -50,7 +50,7 @@ class Lietotajaizveide:
                 print("Datubāzes kļūda")
     def parbaudit_db(self, parole_ievade):
       try:
-         con = sqlite3.connect("file:lietotaji.sqlite?mode=rw&cache=shared", uri=True")
+         con = sqlite3.connect("file:lietotaji.sqlite?mode=rw&cache=shared", uri=True)
          cur = con.cursor()
          cur.execute("SELECT parole FROM lietotaju_info WHERE vards = ?",(self.vards,))
          db_parole = cur.fetchone()
