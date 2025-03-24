@@ -35,7 +35,7 @@ class Lietotajaizveide:
     
     def saglabat_db(self):
         try:
-            con = sqlite3.connect("file:lietotaji.sqlite?mode=rw&cache=shared", uri=True")
+            con = sqlite3.connect("file:lietotaji.sqlite?mode=rw&cache=shared", "uri=True")
             cur = con.cursor()
             cur.execute("INSERT INTO lietotaju_info (vards, parole, email, uuid) VALUES (?, ?, ?, ?)",(self.vards, self.parole, self.email, self.uuid),)
             con.commit()
