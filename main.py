@@ -116,7 +116,11 @@ def register():
          flash("Lietotājvārds jau aizņemts!", "danger")
 
    return render_template('register.html')
-
+    
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('index.html'), 404
+    
 @app.route('/posts')
 def renderThisPath():
   res = render_template('posts.html', 
