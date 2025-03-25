@@ -51,7 +51,7 @@ class Lietotajaizveide:
                 print("Datubāzes kļūda")
     def parbaudit_db(self, parole_ievade):
       try:
-         con = sqlite3.connect"lietotaji.sqlite", check_same_thread=False)
+         con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
          conn.execute('pragma journal_mode=wal')
          cur = con.cursor()
          cur.execute("SELECT parole FROM lietotaju_info WHERE vards = ?",(self.vards,))
