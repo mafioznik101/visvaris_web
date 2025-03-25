@@ -36,7 +36,7 @@ class Lietotajaizveide:
     def saglabat_db(self):
         try:
             con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
-            conn.execute('pragma journal_mode=wal')
+            con.execute('pragma journal_mode=wal')
             cur = con.cursor()
             cur.execute("INSERT INTO lietotaju_info (vards, parole, email, uuid) VALUES (?, ?, ?, ?)",(self.vards, self.parole, self.email, self.uuid),)
             con.commit()
@@ -52,7 +52,7 @@ class Lietotajaizveide:
     def parbaudit_db(self, parole_ievade):
       try:
          con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
-         conn.execute('pragma journal_mode=wal')
+         con.execute('pragma journal_mode=wal')
          cur = con.cursor()
          cur.execute("SELECT parole FROM lietotaju_info WHERE vards = ?",(self.vards,))
          db_parole = cur.fetchone()
