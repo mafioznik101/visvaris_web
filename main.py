@@ -5,8 +5,15 @@ import bcrypt
 import base64
 #sqlite con sākums
 #con.isolation_level = None
-
-
+def loginosanas():
+   lietotajparole = request.form.get("psw")
+   lietotajvards = request.form.get("tavsvards")
+   lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, "email")
+   if lietotajs.parbaudit_db(lietotajparole):
+      flash("pieslēgšānās veiksmīga", "success")
+      print("YAAA")
+   else:
+      flash("Nepareizs lietotājvārds vai parole!", "danger")
 #klase, kur izveidosies lietotājs
 class Lietotajaizveide:
     vards = None
@@ -87,49 +94,35 @@ def izkartojums():
    return render_template('izkartojums.html')
 
 
-@app.route("/parmums")
+@app.route("/parmums", methods=["GET", "POST"])
 def parmums():
+   if request.method == "POST":
+      loginosanas()
    return render_template('parmums.html')
 
 @app.route("/", methods=["GET","POST"])
 def index():
    if request.method == "POST":
-      lietotajparole = request.form.get("psw")
-      lietotajvards = request.form.get("tavsvards")
-      lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, "email")
-      if lietotajs.parbaudit_db(lietotajparole):
-         flash("pieslēgšānās veiksmīga", "success")
-         print("YAAA")
-      else:
-         flash("Nepareizs lietotājvārds vai parole!", "danger")
+      loginosanas()
    return render_template('index.html')
 
 @app.route("/register", methods=["GET","POST"])
 def register():
    if request.method == "POST":
-      lietotajvards = request.form.get("regvards")
-      lietotajparole = request.form.get("regparole")
-      lietotajemail = request.form.get("regepasts")
-      jauns_lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, lietotajemail)
-      if jauns_lietotajs.saglabat_db():
-         flash("Reģistrācija veiksmīga!", "success")
-         print("YAAA")
-      else:
-         flash("Lietotājvārds jau aizņemts!", "danger")
+      loginosanas()
 
    return render_template('register.html')
     
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('index.html'), 404
+    return render_template('404.html'), 404
     
-@app.route('/posts')
-def renderThisPath():
-  res = render_template('posts.html', 
-                       some='variables',
-                       you='want',
-                       toPass=['to','your','template'])
-  return res
+@app.route('/posts', methods=["GET","POST"])
+def posts():
+   if request.method == "POST":
+      loginosanas()
+   
+   return render_template('posts.html')
 # if __name__ == '__main__':  
 #    app.run(debug = True)
 #app.run(debug=True,host="0.0.0.0", port=80)
