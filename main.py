@@ -38,7 +38,7 @@ class Lietotajaizveide:
             con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
             con.execute('pragma journal_mode=wal')
             cur = con.cursor()
-            cur.execute("INSERT INTO lietotaju_info (vards, parole, email, uuid) VALUES (?, ?, ?, ?)",(self.vards, self.parole, self.email, self.uuid),)
+            cur.execute("INSERT INTO lietotaju_info (vards, parole, email, uuid) VALUES (?, ?, ?, ?)",((self.vards).lower(), self.parole, (self.email).lower(), self.uuid),)
             con.commit()
             print(f"Lietotājs {self.vards} pievienots")
             con.close()
@@ -54,7 +54,7 @@ class Lietotajaizveide:
          con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
          con.execute('pragma journal_mode=wal')
          cur = con.cursor()
-         cur.execute("SELECT parole FROM lietotaju_info WHERE vards = ?",(self.vards,))
+         cur.execute("SELECT parole FROM lietotaju_info WHERE vards = ?",((self.vards).lower(),))
          db_parole = cur.fetchone()
          if db_parole is None:
             print("Lietotājvārds nav atrasts!")
