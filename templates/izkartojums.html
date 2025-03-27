@@ -345,8 +345,21 @@
           </a>
         </div>
         <div class="col">
-          <a class="navbar-brand" onclick="document.getElementById('id01').style.display='block'"> Pieslēgties
-          </a>
+          {% if session['lietotaja_id'] %}
+          <div class="btn-group">
+            <button style="color:#dfe1e6; background-color: #531253; border-color: #000000;" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+              {{ session['lietotaja_vards'] }}
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="">Profils</a></li>
+              <li><a class="dropdown-item" href="#">Ziņas</a></li>
+              <li><a class="dropdown-item" onclick="location.href = '/delete';">Iziet</a></li>
+            </ul>
+          </div>
+            {% else %}
+            <a class="navbar-brand" onclick="document.getElementById('id01').style.display='block'"> Pieslēgties
+            </a>
+            {% endif %}
         </div>
       </div>
     </div>
