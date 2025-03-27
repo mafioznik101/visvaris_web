@@ -5,29 +5,6 @@ import bcrypt
 import base64
 #sqlite con sākums
 #con.isolation_level = None
-def loginosanas():
-   lietotajparole = request.form.get("psw")
-   lietotajvards = request.form.get("tavsvards")
-   lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, "email")
-   if lietotajs.parbaudit_db(lietotajparole):
-      flash("pieslēgšānās veiksmīga", "success")
-      #print(lietotajs.iegut_id()) #iedo uuid no eksistējošā lietotāja sqlitā
-      session['lietotaja_id'] = lietotajs.iegut_id()
-      session['lietotaja_vards'] = lietotajvards
-   else:
-      flash("Nepareizs lietotājvārds vai parole!", "danger")
-def regosanas():
-   lietotajparole = request.form.get("regparole")
-   lietotajvards = request.form.get("regvards")
-   lietotajemail = request.form.get("regepasts")
-   lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, lietotajemail)
-   if lietotajs.saglabat_db():
-      print("Jauns users")
-      flash("reģistrēšanās veiksmīga", "success")
-   else:
-      flash("Lietājvārds aizņemts", "danger")
-   
-#klase, kur izveidosies lietotājs
 class Lietotajaizveide:
     vards = None
     parole = None
@@ -91,7 +68,7 @@ class Lietotajaizveide:
          return False
       finally:
          con.close()
-      def iegut_id(self):
+    def iegut_id(self):
        con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
        con.execute('pragma journal_mode=wal')
        cur = con.cursor()
@@ -101,6 +78,30 @@ class Lietotajaizveide:
          print(f"lietotāja kļūda : {self.vards}")
        else:
          return id_lietotajs
+          
+def loginosanas():
+   lietotajparole = request.form.get("psw")
+   lietotajvards = request.form.get("tavsvards")
+   lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, "email")
+   if lietotajs.parbaudit_db(lietotajparole):
+      flash("pieslēgšānās veiksmīga", "success")
+      #print(lietotajs.iegut_id()) #iedo uuid no eksistējošā lietotāja sqlitā
+      session['lietotaja_id'] = lietotajs.iegut_id()
+      session['lietotaja_vards'] = lietotajvards
+   else:
+      flash("Nepareizs lietotājvārds vai parole!", "danger")
+def regosanas():
+   lietotajparole = request.form.get("regparole")
+   lietotajvards = request.form.get("regvards")
+   lietotajemail = request.form.get("regepasts")
+   lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, lietotajemail)
+   if lietotajs.saglabat_db():
+      print("Jauns users")
+      flash("reģistrēšanās veiksmīga", "success")
+   else:
+      flash("Lietājvārds aizņemts", "danger")
+   
+#klase, kur izveidosies lietotājs
 #klase lietotājs beigas   
 salt = bcrypt.gensalt()   
 app = Flask(__name__)
@@ -136,9 +137,10 @@ def register():
 
    return render_template('register.html')
     
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
+@app.route('/delete')
+def delete_email():
+    session.pop('lietotaja_id', default=None)
+    return redirect(url_for('index'))
     
 @app.route('/posts', methods=["GET","POST"])
 def posts():
