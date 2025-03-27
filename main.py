@@ -11,16 +11,18 @@ def loginosanas():
    lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, "email")
    if lietotajs.parbaudit_db(lietotajparole):
       flash("pieslēgšānās veiksmīga", "success")
-      print("YAAA")
+      #print(lietotajs.iegut_id()) #iedo uuid no eksistējošā lietotāja sqlitā
+      session['lietotaja_id'] = lietotajs.iegut_id()
+      session['lietotaja_vards'] = lietotajvards
    else:
       flash("Nepareizs lietotājvārds vai parole!", "danger")
-      
 def regosanas():
    lietotajparole = request.form.get("regparole")
    lietotajvards = request.form.get("regvards")
    lietotajemail = request.form.get("regepasts")
    lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, lietotajemail)
    if lietotajs.saglabat_db():
+      print("Jauns users")
       flash("reģistrēšanās veiksmīga", "success")
    else:
       flash("Lietājvārds aizņemts", "danger")
@@ -89,6 +91,16 @@ class Lietotajaizveide:
          return False
       finally:
          con.close()
+      def iegut_id(self):
+       con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
+       con.execute('pragma journal_mode=wal')
+       cur = con.cursor()
+       cur.execute("SELECT uuid FROM lietotaju_info WHERE vards = ?",((self.vards).lower(),))
+       id_lietotajs = (cur.fetchone())[0]
+       if id_lietotajs == None:
+         print(f"lietotāja kļūda : {self.vards}")
+       else:
+         return id_lietotajs
 #klase lietotājs beigas   
 salt = bcrypt.gensalt()   
 app = Flask(__name__)
