@@ -14,6 +14,17 @@ def loginosanas():
       print("YAAA")
    else:
       flash("Nepareizs lietotājvārds vai parole!", "danger")
+      
+def regosanas():
+   lietotajparole = request.form.get("regparole")
+   lietotajvards = request.form.get("regvards")
+   lietotajemail = request.form.get("regepasts")
+   lietotajs = Lietotajaizveide(lietotajvards, lietotajparole, lietotajemail)
+   if lietotajs.saglabat_db():
+      flash("reģistrēšanās veiksmīga", "success")
+   else:
+      flash("Lietājvārds aizņemts", "danger")
+   
 #klase, kur izveidosies lietotājs
 class Lietotajaizveide:
     vards = None
@@ -109,7 +120,7 @@ def index():
 @app.route("/register", methods=["GET","POST"])
 def register():
    if request.method == "POST":
-      loginosanas()
+      regosanas()
 
    return render_template('register.html')
     
