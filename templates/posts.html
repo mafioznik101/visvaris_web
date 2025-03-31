@@ -1,18 +1,47 @@
 {% extends 'izkartojums.html' %}
 {% block title %}Visvaris.lv{% endblock title %}
 {% block content %}
+{% if session['lietotaja_id'] %}
 <div class="card">
     <div class="card-header">
-      Autors
+      {{ session['lietotaja_vards'] }}
     </div>
     <div class="card-body">
-      <blockquote class="blockquote mb-0">
-        <img id="postabilde" src="{{ url_for('static', filename='kakis3.jpg') }}" class="rounded float-start" alt="postimage">
-        <p>Posta Teksts.</p>
-        <footer class="blockquote-footer">Datums</footer>
-      </blockquote>
+      <div class="row">
+        <div class="col">
+          <img id="postabilde" src="{{ url_for('static', filename='nonefoto.jpg') }}" class="rounded float-start" alt="postimage">
+          <div class="mb-3">
+            <div class="container-fluid">
+            <label for="exampleFormControlInput1" class="form-label">Ja gribi bildi, ievadi bildes saiti</label>
+            <div class="row"> <input id="saitesievade" type="text" name="bildesaite" class="form-control">
+               <button id="publicetsaiti" type="button" class="btn btn-success">Ielādēt</button>
+            </div>
+          </div>
+          </div>          
+        </div>
+        <div class="col">
+          <blockquote class="blockquote mb-0">
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label">Tituls</label>
+              <input type="text" class="form-control">
+            </div>            
+            <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Ieraksti tekstu</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            <footer class="blockquote-footer">Datums</footer>
+          </blockquote>
+        </div>
+      </div>
     </div>
   </div>
-{{ some }}
-{{toPass}}
+  <script>
+    document.getElementById("publicetsaiti").addEventListener("click", function() {
+      var imageUrl = document.getElementById("saitesievade").value;
+      document.getElementById("postabilde").src = imageUrl;
+  });
+  </script>
+{% else %}
+Tev šeit nevajadzētu būt.  |ʘ‿ʘ)╯
+{% endif %}
 {% endblock content %}

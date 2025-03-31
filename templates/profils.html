@@ -1,0 +1,30 @@
+{% extends 'izkartojums.html' %}
+
+{% block title %}Profils{% endblock title %}
+{% block content %}
+{% if session['lietotaja_id'] %}
+<div class="container">
+    <div class="card mb-3" style="max-width: 540vh;">
+      <div class="row g-0">
+        <div class="col-md-4">
+            <i style="display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            font-size: 150px;" class="bi bi-person-circle"></i>
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">Tavs profils</h5>
+            <p style="text-align: left;line-height: 1.5;" class="card-text lh-lg">Vārds: {{ session['lietotaja_vards'] }} <br>Lokācija: Rīga<br>Noskaņojums: Dzīvesprieks</p>
+            <p style="color:green;"  class="card-text"><small class="text-body-secondary">Aktīvs tagad</small></p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% else %}
+Tev šeit nevajadzētu būt.  |ʘ‿ʘ)╯
+{% endif %}
+{% endblock content %}
