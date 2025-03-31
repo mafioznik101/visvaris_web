@@ -3,6 +3,7 @@ import sqlite3
 import uuid
 import bcrypt
 import base64
+
 #sqlite con sākums
 #con.isolation_level = None
 class Lietotajaizveide:
@@ -88,6 +89,7 @@ def loginosanas():
       #print(lietotajs.iegut_id()) #iedo uuid no eksistējošā lietotāja sqlitā
       session['lietotaja_id'] = lietotajs.iegut_id()
       session['lietotaja_vards'] = lietotajvards
+      session['ir_sessija'] = True
    else:
       flash("Nepareizs lietotājvārds vai parole!", "danger")
 def regosanas():
@@ -140,15 +142,27 @@ def register():
 @app.route('/delete')
 def delete_email():
     session.pop('lietotaja_id', default=None)
+    session.pop('ir_sessija', default=False)
     return redirect(url_for('index'))
-    
+   
+      
 @app.route('/posts', methods=["GET","POST"])
 def posts():
    if request.method == "POST":
       loginosanas()
-   
-   return render_template('posts.html')
-# if __name__ == '__main__':  
-#    app.run(debug = True)
+   if session.get('ir_sessija') == True:
+      return render_template('posts.html')
+   else:
+      return redirect(url_for('index'))
+
+@app.route('/profils', methods=["GET","POST"])
+def profils():
+   if request.method == "POST":
+      loginosanas()
+   if session.get('ir_sessija') == True:
+      return render_template('profils.html')
+   else:
+      return redirect(url_for('index'))
+
 #app.run(debug=True,host="0.0.0.0", port=80)
 #app.run(debug=False,host="0.0.0.0", port=80)
