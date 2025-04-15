@@ -3,9 +3,9 @@ import sqlite3
 import uuid
 import bcrypt
 import base64
+import validators
+import datetime
 
-#sqlite con sākums
-#con.isolation_level = None
 class Lietotajaizveide:
     vards = None
     parole = None
@@ -79,7 +79,74 @@ class Lietotajaizveide:
          print(f"lietotāja kļūda : {self.vards}")
        else:
          return id_lietotajs
-          
+
+class Publikacija:
+    tituls = None
+    posta_teksts = None
+    bildes_saite = None
+    user_id = None
+    post_id = None
+    def __init__(self, tituls, posta_teksts, bildes_saite, user_id):
+        self.tituls = tituls
+        self.posta_teksts = posta_teksts
+        self.bildes_saite = bildes_saite
+        self.user_id = user_id
+        self.post_id = str(uuid.uuid4()) #identifikators
+    def pievienot_post(self):
+        try:
+            con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
+            con.execute('pragma journal_mode=wal')
+            cur = con.cursor()
+            cur.execute("INSERT INTO posti (tituls, posta_teksts, bildes_saite, user_id, post_id, aktivs) VALUES (?, ?, ?, ?, ?, ?)",((self.tituls), self.posta_teksts, (self.bildes_saite), self.user_id, self.post_id, 1),)
+            con.commit()
+            return True
+        except sqlite3.IntegrityError as kluda:
+            if "UNIQUE constraint failed" in str(kluda):
+                #print("posts nav sataisits")
+                return False
+            else:
+                print("Datubāzes kļūda")
+                return False
+    def publikajicas_paradit(self):
+        con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
+        con.execute('pragma journal_mode=wal')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM posti")
+
+class Komentars:
+   def __init__(self, komentarateksts, uuid, post_id):
+      self.komentarateksts = komentarateksts
+      self.uuid = uuid
+      self.post_id = post_id
+   def pievienot_komentaru(self):
+       try:
+            con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
+            con.execute('pragma journal_mode=wal')
+            cur = con.cursor()
+            dt = datetime.datetime.now()
+            laiks = dt.strftime("%Y-%m-%d %H:%M:%S")
+            cur.execute("INSERT INTO komentari (komentarateksts, uuid, post_id, datums) VALUES (?, ?, ?, ?)", (self.komentarateksts, self.uuid, self.post_id, laiks))
+            con.commit()
+            return True
+       except sqlite3.IntegrityError as kluda:
+            if "UNIQUE constraint failed" in str(kluda):
+                #print("posts nav sataisits")
+                return False
+            else:
+                print("Datubāzes kļūda")
+                return False
+       finally:
+         con.close()
+      
+def get_publikacijas():
+    con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
+    con.execute('pragma journal_mode=wal')
+    cur = con.cursor()
+    cur.execute("SELECT posti.tituls, posti.posta_teksts, posti.bildes_saite, posti.user_id, posti.post_id, lietotaju_info.vards FROM posti JOIN lietotaju_info ON posti.user_id = lietotaju_info.uuid")
+    rows = cur.fetchall()
+    con.close()
+    return rows
+ 
 def loginosanas():
    lietotajparole = request.form.get("psw")
    lietotajvards = request.form.get("tavsvards")
@@ -101,7 +168,7 @@ def regosanas():
       print("Jauns users")
       flash("reģistrēšanās veiksmīga", "success")
    else:
-      flash("Lietājvārds aizņemts", "danger")
+      flash("Lietotājvārds aizņemts", "danger")
    
 #klase, kur izveidosies lietotājs
 #klase lietotājs beigas   
@@ -111,13 +178,11 @@ app.secret_key = bcrypt.hashpw(b"", salt)
 #TEMPLATES_AUTO_RELOAD = True
 @app.route("/izkartosanas", methods=["GET","POST"])
 def izkartojums():
-   lietotaja_vards = None
-   if request.method == "POST":
-      lietotaja_vards = request.form.get("tavsvards")
-      #lietotaja_parole = request.form.get("psw")
-      print(f"vaicājums login. lietotājs: {lietotaja_vards}")
-      #if lietotaja_vards == 
    return render_template('izkartojums.html')
+
+@app.route("/izkartosanas2", methods=["GET","POST"])
+def izkartojums2():
+   return render_template('izkartojums2.html')
 
 
 @app.route("/parmums", methods=["GET", "POST"])
@@ -130,31 +195,71 @@ def parmums():
 def index():
    if request.method == "POST":
       loginosanas()
-   return render_template('index.html')
+   dati = get_publikacijas()
+   return render_template('index.html', dati=dati)
 
 @app.route("/register", methods=["GET","POST"])
 def register():
    if request.method == "POST":
       regosanas()
-
    return render_template('register.html')
     
 @app.route('/delete')
-def delete_email():
+def delete():
     session.pop('lietotaja_id', default=None)
     session.pop('ir_sessija', default=False)
     return redirect(url_for('index'))
    
-      
+
 @app.route('/posts', methods=["GET","POST"])
 def posts():
-   if request.method == "POST":
-      loginosanas()
+   if request.method =='POST':
+      teksts = request.form.get("publikacijasteksts")
+      tituls = request.form.get("publikacijastituls")
+      linksbilde = request.form.get("bildesaite")
+      vai_saite = validators.url(linksbilde)
+      if vai_saite and not linksbilde.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+         linksbilde = "https://media-hosting.imagekit.io/f36f5ddbea9349cc/nonefoto.png?Expires=1838783557&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Favu3gN1SvNk~T26-J66rqlEyCVx-e1qTPKlahtL7sjWNrCQlV0EOx2Kz4YKS79~XwGahbS-A06WZdTxTpXzSm-75vyt13Q1QLLJVdbF0cu-aBdY5cGefY7892cRdQp85UGQt~Cg5g9vPLdmyV2inIhS1uQZEMNl7Fq8J6PhgK6HRAwXOwY25igsv2odd2gscIBVs-70hrp3IN4Dn-K6-CS6iLX4KZudajVjbQl5ck9zsvF6RlyiTy~jNrILtnU6ohh0FvPvenEdvUfWXt1cCZ2b3j~VU3QH9BxK0tMRE6AiFzJNfvDeiot~prG--ZUAKhdZwSbrJvgAWreZU0dQsg__"
+      if linksbilde == "":
+         linksbilde = "https://media-hosting.imagekit.io/f36f5ddbea9349cc/nonefoto.png?Expires=1838783557&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Favu3gN1SvNk~T26-J66rqlEyCVx-e1qTPKlahtL7sjWNrCQlV0EOx2Kz4YKS79~XwGahbS-A06WZdTxTpXzSm-75vyt13Q1QLLJVdbF0cu-aBdY5cGefY7892cRdQp85UGQt~Cg5g9vPLdmyV2inIhS1uQZEMNl7Fq8J6PhgK6HRAwXOwY25igsv2odd2gscIBVs-70hrp3IN4Dn-K6-CS6iLX4KZudajVjbQl5ck9zsvF6RlyiTy~jNrILtnU6ohh0FvPvenEdvUfWXt1cCZ2b3j~VU3QH9BxK0tMRE6AiFzJNfvDeiot~prG--ZUAKhdZwSbrJvgAWreZU0dQsg__"
+      lietotaja_posts = Publikacija(tituls, teksts, linksbilde, session['lietotaja_id']) #
+      lietotaja_posts.pievienot_post()
+      print(linksbilde)
+      flash("publikācija ir ievietota", "success")
    if session.get('ir_sessija') == True:
       return render_template('posts.html')
    else:
       return redirect(url_for('index'))
 
+@app.route('/publikacijaaa/<string:post_id>', methods=['GET', 'POST'])
+def publikacijaa(post_id):
+    con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
+    con.execute('pragma journal_mode=wal')
+    cur = con.cursor()
+    cur.execute("SELECT posti.tituls, posti.posta_teksts, posti.bildes_saite, posti.user_id, posti.post_id, lietotaju_info.vards FROM posti JOIN lietotaju_info ON posti.user_id = lietotaju_info.uuid WHERE posti.post_id = ?", (post_id,))
+    dati = cur.fetchone()
+    cur.execute("SELECT komentari.komentarateksts, komentari.datums, lietotaju_info.vards FROM komentari JOIN lietotaju_info ON komentari.uuid = lietotaju_info.uuid WHERE komentari.post_id = ?", (post_id,))
+    komentarii = cur.fetchall()
+    con.close()
+    if request.method == "POST":
+         komentars = request.form.get("komentars")
+         if komentars != "":
+               komentars = Komentars(komentars, session['lietotaja_id'], post_id)
+               komentars.pievienot_komentaru()
+               flash("komentārs ir ievietots", "success")
+         else:
+               flash("komentārs ir tukšs", "danger")
+    if dati:
+        return render_template('publikacijas.html', dati=dati, komentarii=komentarii)
+    else:
+        flash("404 kļūda!!!!", "error")
+        return redirect(url_for('index'))
+ 
+@app.route('/publikacijas', methods=['GET'])
+def publikacijas():
+    dati = get_publikacijas()
+    return (dati)
+ 
 @app.route('/profils', methods=["GET","POST"])
 def profils():
    if request.method == "POST":
@@ -164,5 +269,4 @@ def profils():
    else:
       return redirect(url_for('index'))
 
-#app.run(debug=True,host="0.0.0.0", port=80)
-#app.run(debug=False,host="0.0.0.0", port=80)
+#app.run(debug=True,host="0.0.0.0", port=80) # atkļūdošanai
