@@ -129,7 +129,7 @@ class Komentars:
             con.commit()
             return True
        except sqlite3.IntegrityError as kluda:
-            if "UNIQUE constraint failed" in str(kluda):
+            if "NOT NULL constraint failed" in str(kluda):
                 #print("posts nav sataisits")
                 return False
             else:
@@ -236,23 +236,30 @@ def publikacijaa(post_id):
     con = sqlite3.connect("lietotaji.sqlite", check_same_thread=False)
     con.execute('pragma journal_mode=wal')
     cur = con.cursor()
-    cur.execute("SELECT posti.tituls, posti.posta_teksts, posti.bildes_saite, posti.user_id, posti.post_id, lietotaju_info.vards FROM posti JOIN lietotaju_info ON posti.user_id = lietotaju_info.uuid WHERE posti.post_id = ?", (post_id,))
+    cur.execute('SELECT posti.tituls, posti.posta_teksts, posti.bildes_saite, posti.user_id, posti.post_id, lietotaju_info.vards FROM posti JOIN lietotaju_info ON posti.user_id = lietotaju_info.uuid WHERE posti.post_id = ?', (post_id,))
     dati = cur.fetchone()
-    cur.execute("SELECT komentari.komentarateksts, komentari.datums, lietotaju_info.vards FROM komentari JOIN lietotaju_info ON komentari.uuid = lietotaju_info.uuid WHERE komentari.post_id = ?", (post_id,))
+    cur.execute('SELECT komentari.komentarateksts, komentari.datums, lietotaju_info.vards FROM komentari JOIN lietotaju_info ON komentari.uuid = lietotaju_info.uuid WHERE komentari.post_id = ?', (post_id,))
     komentarii = cur.fetchall()
     con.close()
-    if request.method == "POST":
-         komentars = request.form.get("komentars")
-         if komentars != "":
-               komentars = Komentars(komentars, session['lietotaja_id'], post_id)
-               komentars.pievienot_komentaru()
-               flash("komentārs ir ievietots", "success")
-         else:
-               flash("komentārs ir tukšs", "danger")
+    if request.method == 'POST':
+        komentars = request.form.get('komentars')
+        if komentars.strip():
+            try:
+                komentarssss = Komentars(komentars, session['lietotaja_id'], post_id)
+                veiksme = komentarssss.pievienot_komentaru()
+                if veiksme:
+                    flash('Komentārs ir ievietots', 'success')
+                else:
+                    flash('Kļūda: komentāru nevarēja ievietot.', 'danger')
+                return redirect(url_for('publikacijaa', post_id=post_id))
+            except Exception as e:
+                flash('Kļūda, pievienojot komentāru.', 'danger')
+        else:
+            flash('Komentārs ir tukšs', 'danger')
     if dati:
         return render_template('publikacijas.html', dati=dati, komentarii=komentarii)
     else:
-        flash("404 kļūda!!!!", "error")
+        flash('404 kļūda! Publikācija nav atrasta.', 'error')
         return redirect(url_for('index'))
  
 @app.route('/publikacijas', methods=['GET'])
