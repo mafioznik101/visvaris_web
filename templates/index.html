@@ -53,10 +53,11 @@
             <div class="container text-center">
               <div class="row">
                 <div id="paceltpostu" style="font-size: xx-large;display: inline-flex;" class="col">
-                  <button href="#" class="bi bi-star"></button><a>11</a>
+                  <button href="#" class="bi bi-star"></button><a class="random-number"></a>
                 </div>
-                <div id="komentarsposts" style="font-size: xx-large;display: inline-flex;" class="col"><button href="#" class="bi bi-chat-left-text"></button><a>16</a>
-                  </div>
+                <div id="komentarsposts" style="font-size: xx-large;display: inline-flex;" class="col">
+                  <button href="#" class="bi bi-chat-left-text"></button><a class="random-number"></a>
+                </div>
               </div>
           </figcaption>
         </figure>
@@ -69,4 +70,14 @@
   </div>
 </div>
 {% endfor %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    let randomNumbers = document.querySelectorAll('.random-number');
+    randomNumbers.forEach(element => {
+      let randomNumber = Math.floor(Math.random() * 101); 
+      element.textContent = randomNumber;
+    });
+  });
+</script>
 {% endblock content %}
