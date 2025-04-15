@@ -18,6 +18,19 @@
 
 
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for category, message in messages %}
+    <div style="opacity: 75%;
+  margin-top: 5px;" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 <h1 id="galvaparmums">Mūsu izcila programmētāju komanda</h1>
 <div class="container text-center">
     <div class="row">
@@ -38,7 +51,7 @@
   </div>
 <h3 style="word-wrap: break-word; background-color: #dfe1e6; color: #212529; line-height: 1.8; font-style: italic; margin-top: 2vw;">    Mūsu stāsts sākās ar aizrautību un inovācijām. Roberts Preimanis, izcils programmētājs un radošs prāts, atgriezās Latvijā pēc ilgstošām studijām Indijā, nesot līdzi jaunas idejas un pieredzi. Latvijā viņš sastapa līdzīgi domājošus entuziastus – Martinu Vaginu un Nauri Bogomazovu, divus talantīgus programmētājus, kuri dalījās viņa aizrautībā par tehnoloģijām un izglītības iespējām.
 
-  Apvienojot spēkus, viņi radīja "Visvaris – Ceļš uz stipendiju", vizuālo noveli, kas ne tikai izklaidē, bet arī iedvesmo jauniešus sasniegt vairāk. Šis projekts ir mūsu vīzija par to, kā Piņķi var palīdzēt attīstīt radošumu, stratēģisko domāšanu un mērķtiecību.
+  Apvienojot spēkus, viņi radīja visvaris.lv, forumu par kaķīšiem, kas ne tikai izklaidē, bet arī iedvesmo jauniešus sasniegt vairāk. Šis projekts ir mūsu vīzija par to, kā Piņķi var palīdzēt attīstīt radošumu, stratēģisko domāšanu un mērķtiecību.
   
-  Mēs ticam, ka videospēles un neatlaidība padara cilvēku visvarenu. Tāpēc mēs turpinām attīstīt visvaris.lv, jo tu VisuVari!</h3>
+  Mēs ticam, ka kaķīši un neatlaidība padara cilvēku visvarenu. Tāpēc mēs turpinām attīstīt visvaris.lv, jo tu VisuVari!</h3>
 {% endblock content %}

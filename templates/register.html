@@ -1,4 +1,4 @@
-{% extends 'izkartojums.html' %}
+{% extends 'izkartojums2.html' %}
 {% block title %}Login{% endblock title %}
 {% block content %}
 <h1 style="text-align: center;">Reģistrācija</h1>
@@ -6,7 +6,11 @@
   {% if messages %}
     <ul class=flashes>
     {% for category, message in messages %}
-      <li style="font-style:italic;" class="{{ category }}">{{ message }}</li>
+    <div style="opacity: 75%;
+  margin-top: 5px;" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     {% endfor %}
     </ul>
   {% endif %}
@@ -26,6 +30,6 @@
     <label for="passwordinput" class="form-label">Parole</label>
     <input type="password" name="regparole" class="form-control" id="exampleInputPassword1" required>
   </div>
-  <button type="submit" class="btn btn-primary">Reģistrēties</button>
+  <button name="login" type="submit" class="btn btn-primary">Reģistrēties</button>
 </form>
 {% endblock content %}

@@ -2,6 +2,19 @@
 {% block title %}Visvaris.lv{% endblock title %}
 {% block content %}
 {% if session['lietotaja_id'] %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for category, message in messages %}
+    <div style="opacity: 75%;
+  margin-top: 5px;" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 <div class="card">
     <div class="card-header">
       {{ session['lietotaja_vards'] }}
@@ -9,11 +22,12 @@
     <div class="card-body">
       <div class="row">
         <div class="col">
-          <img id="postabilde" src="{{ url_for('static', filename='nonefoto.jpg') }}" class="rounded float-start" alt="postimage">
+          <img id="postabilde" src="https://media-hosting.imagekit.io/f36f5ddbea9349cc/nonefoto.png?Expires=1838783557&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Favu3gN1SvNk~T26-J66rqlEyCVx-e1qTPKlahtL7sjWNrCQlV0EOx2Kz4YKS79~XwGahbS-A06WZdTxTpXzSm-75vyt13Q1QLLJVdbF0cu-aBdY5cGefY7892cRdQp85UGQt~Cg5g9vPLdmyV2inIhS1uQZEMNl7Fq8J6PhgK6HRAwXOwY25igsv2odd2gscIBVs-70hrp3IN4Dn-K6-CS6iLX4KZudajVjbQl5ck9zsvF6RlyiTy~jNrILtnU6ohh0FvPvenEdvUfWXt1cCZ2b3j~VU3QH9BxK0tMRE6AiFzJNfvDeiot~prG--ZUAKhdZwSbrJvgAWreZU0dQsg__" class="rounded float-start" alt="postimage">
           <div class="mb-3">
+          <form method="post">
             <div class="container-fluid">
-            <label for="exampleFormControlInput1" class="form-label">Ja gribi bildi, ievadi bildes saiti</label>
-            <div class="row"> <input id="saitesievade" type="text" name="bildesaite" class="form-control">
+            <label for="exampleFormControlInput1" class="form-label">Ja gribi bildi, ievadi bildes saiti (png, jpeg, gif, jpg)</label>
+            <div class="row"><input id="saitesievade" type="text" name="bildesaite" class="form-control"></input>
                <button id="publicetsaiti" type="button" class="btn btn-success">Ielādēt</button>
             </div>
           </div>
@@ -23,24 +37,30 @@
           <blockquote class="blockquote mb-0">
             <div class="mb-3">
               <label for="exampleFormControlInput1" class="form-label">Tituls</label>
-              <input type="text" class="form-control">
+              <input minlength="2" maxlength="25" name="publikacijastituls" type="text" class="form-control">
             </div>            
             <div class="mb-3">
               <label for="exampleFormControlTextarea1" class="form-label">Ieraksti tekstu</label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+              <textarea minlength="5" maxlength="600" placeholder="maksimums 600 vārdi!" class="form-control" name="publikacijasteksts" id="exampleFormControlTextarea1" rows="3"></textarea>
             </div>
-            <footer class="blockquote-footer">Datums</footer>
+            <button name="publicet_foruma">Apstiprināt</button>
           </blockquote>
+          </form>
         </div>
       </div>
     </div>
   </div>
   <script>
     document.getElementById("publicetsaiti").addEventListener("click", function() {
-      var imageUrl = document.getElementById("saitesievade").value;
-      document.getElementById("postabilde").src = imageUrl;
-  });
+      let saite = document.getElementById("saitesievade").value;
+      if (saite.trim() === "") {
+        document.getElementById("postabilde").src = "https://media-hosting.imagekit.io/f36f5ddbea9349cc/nonefoto.png?Expires=1838783557&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=Favu3gN1SvNk~T26-J66rqlEyCVx-e1qTPKlahtL7sjWNrCQlV0EOx2Kz4YKS79~XwGahbS-A06WZdTxTpXzSm-75vyt13Q1QLLJVdbF0cu-aBdY5cGefY7892cRdQp85UGQt~Cg5g9vPLdmyV2inIhS1uQZEMNl7Fq8J6PhgK6HRAwXOwY25igsv2odd2gscIBVs-70hrp3IN4Dn-K6-CS6iLX4KZudajVjbQl5ck9zsvF6RlyiTy~jNrILtnU6ohh0FvPvenEdvUfWXt1cCZ2b3j~VU3QH9BxK0tMRE6AiFzJNfvDeiot~prG--ZUAKhdZwSbrJvgAWreZU0dQsg__";
+      } else {
+        document.getElementById("postabilde").src = saite;
+      }
+    });
   </script>
+  
 {% else %}
 Tev šeit nevajadzētu būt.  |ʘ‿ʘ)╯
 {% endif %}

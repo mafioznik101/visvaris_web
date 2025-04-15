@@ -1,0 +1,54 @@
+{% extends 'izkartojums2.html' %}
+
+{% block title %}Publikacija{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <img src="{{ dati[2] }}" class="card-img-top" alt="bildites_nav" style="max-height: 400px; object-fit: contain;">
+        <div class="card-body">
+            <h1 class="card-title text-center">{{ dati[0] }}</h1>
+            <p  class="card-text text-muted text-center">{{ dati[5] }}</p>
+            <hr>
+            <p  style="white-space: pre-wrap;" class="card-text">{{ dati[1] }}</p>
+        </div>
+    </div>
+</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for category, message in messages %}
+    <div style="opacity: 75%;
+  margin-top: 5px;" class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      <strong>{{ message }}</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% if session['lietotaja_id'] %}
+<div style="margin-top: 5px;" id="commentary" class="alert alert-secondary" role="alert">
+
+    <h3>Uzraksti komentāru!</h3>
+<form method="post">
+  <div class="input-group mb-3">
+  <button class="btn btn-outline-secondary" type="submit">Publicēt</button>
+    <input name="komentars" type="text" id="commenttext" class="form-control" placeholder="Teksts" aria-label="Teksts" aria-describedby="button-addon1">
+  </div>
+</form>
+</div>
+{% else %}
+{% endif %}
+
+<div style="margin-top: 10px;" class="alert alert-secondary" id="liveAlertPlaceholder">
+    {% for row in komentarii %}
+    <div style="text-align:left;font-size: 135%;
+    line-height: 1.8;padding-top:2vh;" class="alert alert-secondary-${type} alert-dismissible" role="alert">
+    <i style="margin-right: 2vw;" class="bi bi-person-circle">{{ row[2] }}</i> <div style="margin-bottom:2px;">{{ row[1] }}</div>
+      <div>{{ row[0] }}</div>
+     
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

@@ -372,47 +372,9 @@ width: 500px;
           <a class="navbar-brand" onclick="location.href = '/parmums';"> Par mums
           </a>
         </div>
-        <div class="col">
-          {% if session['lietotaja_id'] %}
-          <div class="btn-group">
-            <button style="color:#dfe1e6; background-color: #531253; border-color: #000000;" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-              {{ session['lietotaja_vards'] }}
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" onclick="location.href = '/profils';">Profils</a></li>
-              <li><a class="dropdown-item" onclick="location.href = '/posts';">Publicēt</a></li>
-              <li><a class="dropdown-item" onclick="location.href = '/delete';">Iziet</a></li>
-            </ul>
-          </div>
-            {% else %}
-            <a class="navbar-brand" onclick="document.getElementById('id01').style.display='block'"> Pieslēgties
-            </a>
-            {% endif %}
-        </div>
       </div>
     </div>
   </nav>
-  <div id="id01" class="modal">
-    <span onclick="document.getElementById('id01').style.display='none'"
-  class="close" title="Close Modal">&times;</span>
-  
-    <!-- Modal Content -->
-    <form class="modal-content animate" method="post">
-      <div style="margin-top: 2vw;" class="container" style="background-color:#f1f1f1">
-        <button class="btn btn-outline-dark" type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn"><i class="bi bi-x"></i></button>
-      </div>
-      <div style="padding: 20px; border-radius: 5px; display: grid;" class="container">
-        <label style="margin-bottom: 5px;" for="uname"><b>Lietotājs</b></label>
-        <input style="margin-bottom: 5px;" type="text" placeholder="Ievadi lietotājvārdu!" name="tavsvards" required>
-  
-        <label style="margin-bottom: 5px;" for="psw"><b>Parole</b></label>
-        <input style="margin-bottom: 5px;" type="password" placeholder="Ievadi paroli!" name="psw" required>
-  
-        <button name="login" style="margin-bottom: 5px;" class="btn btn-outline-dark" type="submit">Pieslēgties</button>
-        <p>Nav konta? <button class="btn btn-outline-dark" name="register" type="submit" onclick="location.href = '/register';">Reģistrēties</button> </p>
-      </div>
-    </form>
-  </div>
   <main role="main" class="container">
     {% block content %}{% endblock content %}
   </main>
